@@ -12,10 +12,8 @@ print('Part 1: ', result)
 
 # P 2
 
-data2 = re.findall(r"do\(\)|'t\(\)|l\(\d+,\d+\)", content)
-
 content = re.sub(r"don't\(\).*?(?:$|do\(\))", '', content, flags=re.DOTALL)
 
-result = sum(int(a)*int(b) for a,b in re.findall(r'mul\((\d+),(\d+)\)', content))
+result = sum(int(x)*int(y) for x,y in re.findall(r'mul\((\d+),(\d+)\)', content))
 
 print('Part 2: ', result)
