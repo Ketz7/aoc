@@ -1,18 +1,21 @@
-import aoc_lube
+import re
 
-RAW = aoc_lube.fetch(year=2024, day=3)
-print(RAW)
+with open('input_3.txt') as f:
+    content = f.read().strip()
 
-def parse_raw():
-    ...
+# P 1
+data = re.findall(r'mul\((\d+,\d+)\)', content)
 
-DATA = parse_raw()
+result = sum(int(x) * int(y) for pair in data for x,y in [pair.split(',')])
 
-def part_one():
-    ...
+print('Part 1: ', result)
 
-def part_two():
-    ...
+# P 2
 
-aoc_lube.submit(year=2024, day=3, part=1, solution=part_one)
-aoc_lube.submit(year=2024, day=3, part=2, solution=part_two)
+data2 = re.findall(r"do\(\)|'t\(\)|l\(\d+,\d+\)", content)
+
+content = re.sub(r"don't\(\).*?(?:$|do\(\))", '', content, flags=re.DOTALL)
+
+result = sum(int(a)*int(b) for a,b in re.findall(r'mul\((\d+),(\d+)\)', content))
+
+print('Part 2: ', result)
