@@ -1,18 +1,23 @@
-import aoc_lube
+from collections import defaultdict
 
-RAW = aoc_lube.fetch(year=2024, day=23)
-print(RAW)
+lines = [l.rstrip() for l in open('input.txt')]
 
-def parse_raw():
-    ...
+connections = defaultdict(set)
+nodes = set()
 
-DATA = parse_raw()
+for l in lines: 
+    # Only do a connection from the lesser to greater node
+    a, b = sorted(l.split("-"))
+    connections[a] |= {b}
+    nodes |= {a, b}
 
-def part_one():
-    ...
+def get_cliques(subset): 
+    res = {()}
+    for node in subset:
+        res |= {(node,) + k for k in get_cliques(subset & connections[node])}
+    return res
 
-def part_two():
-    ...
+cliques = get_cliques(nodes)
 
-aoc_lube.submit(year=2024, day=23, part=1, solution=part_one)
-aoc_lube.submit(year=2024, day=23, part=2, solution=part_two)
+print(len([c for c in cliques if len(c) == 3 and any(n[0] == "t" for n in c)]))
+print(",".join(max(cliques, key = lambda c: len(c))))

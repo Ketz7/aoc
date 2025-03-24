@@ -1,18 +1,24 @@
-import aoc_lube
+import re
 
-RAW = aoc_lube.fetch(year=2024, day=13)
-print(RAW)
+with open("input_6.txt") as f:
+    text = f.read()
+    blocks = text.split("\n\n")
 
-def parse_raw():
-    ...
 
-DATA = parse_raw()
+def linearcombination(numbers, offset):
+    xa, ya, xb, yb, x, y = numbers
+    x, y = x + offset, y+offset
+    b = round((((x/xa)-(y/ya))/((xb/xa)-(yb/ya))))
+    a = round((x-(b*xb))/xa)
+    return a*3 + b if a*xa + b*xb == x and a*ya + b*yb == y else 0
 
-def part_one():
-    ...
 
-def part_two():
-    ...
-
-aoc_lube.submit(year=2024, day=13, part=1, solution=part_one)
-aoc_lube.submit(year=2024, day=13, part=2, solution=part_two)
+result = 0
+result2 = 0
+for block in blocks:
+    pattern = r"(\d+)"
+    numbers = list(map(int, re.findall(pattern, block)))
+    result += linearcombination(numbers, 0)
+    result2 += linearcombination(numbers, 10000000000000)
+print(result)
+print(result2)

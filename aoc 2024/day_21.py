@@ -1,18 +1,11 @@
-import aoc_lube
-
-RAW = aoc_lube.fetch(year=2024, day=21)
-print(RAW)
-
-def parse_raw():
-    ...
-
-DATA = parse_raw()
-
-def part_one():
-    ...
-
-def part_two():
-    ...
-
-aoc_lube.submit(year=2024, day=21, part=1, solution=part_one)
-aoc_lube.submit(year=2024, day=21, part=2, solution=part_two)
+from functools import *
+L=*open('input.txt'),
+@cache
+def F(s,k,r):
+ if k>r:return len(s)
+ M={};i=t=0
+ for v in["789456123_0A","_^A<v>"][k>0]:M[v]=i%3,i//3;i+=1
+ A,B=M["_"]
+ for d,c in zip("A"+s,s):x,y=M[d];X,Y=M[c];a,b=X-x,Y-y;t+=F(("<"*-a+"v"*b+"^"*-b+">"*a)[::-(X==A)*(y==B)-(Y==B)*(x==A)|1]+"A",k+1,r)
+ return t
+print(*(sum(int((k:=l.strip())[:-1])*F(k,0,n)for l in L)for n in(2,25)))

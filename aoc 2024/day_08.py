@@ -1,18 +1,31 @@
-import aoc_lube
+import sys, collections, itertools
 
-RAW = aoc_lube.fetch(year=2024, day=8)
-print(RAW)
+with open(r'input_6.txt') as file:
+    content = file.read()
 
-def parse_raw():
-    ...
+cells = set()
+antennas_by_frequency = collections.defaultdict(set)
+for r, line in enumerate(content.splitlines()):
+    for c, char in enumerate(line):
+        cell = r + c*1j
+        cells.add(cell)
+        if char != '.':
+            antennas_by_frequency[char].add(cell)
 
-DATA = parse_raw()
+antinodes = set()
+for frequency, antennas in antennas_by_frequency.items():
+    for a, b in itertools.combinations(antennas, 2):
+        antinodes |= {2*a - b, 2*b - a} & cells
 
-def part_one():
-    ...
+p1 = len(antinodes)
+print(p1)
 
-def part_two():
-    ...
+assert len(content.splitlines()) <= 50
 
-aoc_lube.submit(year=2024, day=8, part=1, solution=part_one)
-aoc_lube.submit(year=2024, day=8, part=2, solution=part_two)
+antinodes = set()
+for frequency, antennas in antennas_by_frequency.items():
+    for a, b in itertools.combinations(antennas, 2):
+        antinodes |= {b + (b-a)*i for i in range(-50, +50)} & cells
+
+p2 = len(antinodes)
+print(p2)

@@ -1,18 +1,9 @@
-import aoc_lube
-
-RAW = aoc_lube.fetch(year=2024, day=17)
-print(RAW)
-
-def parse_raw():
-    ...
-
-DATA = parse_raw()
-
-def part_one():
-    ...
-
-def part_two():
-    ...
-
-aoc_lube.submit(year=2024, day=17, part=1, solution=part_one)
-aoc_lube.submit(year=2024, day=17, part=2, solution=part_two)
+a,*_,p=open("input.txt")
+a=int(a[12:])
+p=eval(p[9:])
+n=lambda a,b:b^(a>>b)^next(p[i+1]for i in(6,8,10)if p[i]==1)
+k=""
+while a:k+=f",{n(a,a&7^p[3])&7}";a>>=3
+print(k[1:])
+s=lambda a,i:i==len(p)<print(a)or[s(k,i+1)for x in range(8)if n(k:=a<<3|x,x^p[3])&7==p[~i]]
+s(0,0)

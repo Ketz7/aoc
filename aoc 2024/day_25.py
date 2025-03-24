@@ -1,18 +1,19 @@
-import aoc_lube
+import itertools as itt
 
-RAW = aoc_lube.fetch(year=2024, day=25)
-print(RAW)
+with open("input.txt") as in_f:
+    DD = in_f.read().strip()
+ans = 0
 
-def parse_raw():
-    ...
+ks = set()
+for block in DD.split("\n\n"):
+    g = set()
+    for y, line in enumerate(block.splitlines()):
+        for x, c in enumerate(line):
+            if c == "#":
+                g.add(complex(x, y))
+    ks.add(frozenset(g))
 
-DATA = parse_raw()
-
-def part_one():
-    ...
-
-def part_two():
-    ...
-
-aoc_lube.submit(year=2024, day=25, part=1, solution=part_one)
-aoc_lube.submit(year=2024, day=25, part=2, solution=part_two)
+for a, b in itt.combinations(ks, 2):
+    if not a & b:
+        ans += 1
+print(ans)

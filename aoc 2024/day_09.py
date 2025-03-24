@@ -1,18 +1,48 @@
-import aoc_lube
+def part1():
+    with open("input_6.txt") as f:
+        disk = f.read().strip()
+    blocks = [int(i) for i in disk[::2]]
+    print(blocks)
+    spaces = [int(i) for i in disk[1::2]]
+    compact = []
+    left = 0
+    right = len(blocks) - 1
+    while left < right:
+        compact += [left] * blocks[left]
+        while spaces[left] >= blocks[right]:
+            compact += [right] * blocks[right]
+            spaces[left] -= blocks[right]
+            right -= 1
 
-RAW = aoc_lube.fetch(year=2024, day=9)
-print(RAW)
+        compact += [right] * spaces[left]
+        blocks[right] -= spaces[left]
+        left += 1
 
-def parse_raw():
-    ...
+    compact += [left] * blocks[left]
+    print(f"Part1: {sum(i * j for i, j in enumerate(compact))}")
 
-DATA = parse_raw()
 
-def part_one():
-    ...
+def part2():
+    with open("input_6.txt") as f:
+        disk = f.read().strip()
 
-def part_two():
-    ...
+    blocks = [int(i) for i in disk[::2]]
+    spaces = [int(i) for i in disk[1::2]] + [0]
+    buffer = [[] for _ in range(len(blocks))]
+    for right in range(len(blocks) - 1, -1, -1):
+        for left in range(right):
+            if spaces[left] >= blocks[right]:
+                spaces[left] -= blocks[right]
+                spaces[right - 1] += blocks[right]
+                buffer[left] += [right] * blocks[right]
+                blocks[right] = 0
+                break
 
-aoc_lube.submit(year=2024, day=9, part=1, solution=part_one)
-aoc_lube.submit(year=2024, day=9, part=2, solution=part_two)
+    compact = []
+    for i in range(len(blocks)):
+        compact += [i] * blocks[i]
+        compact += buffer[i] + [0] * (spaces[i])
+    print(f"Part2: {sum(i * j for i, j in enumerate(compact))}")
+
+print(part1())
+print(part2())

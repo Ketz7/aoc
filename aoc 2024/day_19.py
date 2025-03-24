@@ -1,18 +1,35 @@
-import aoc_lube
+with open('input.txt') as f:
+    s = f.read().strip()
 
-RAW = aoc_lube.fetch(year=2024, day=19)
-print(RAW)
+P1 = P2 = 0
 
-def parse_raw():
-    ...
+s1, s2 = s.split('\n\n')
 
-DATA = parse_raw()
+s1 = set(s1.split(", "))
 
-def part_one():
-    ...
+cache = {}
+def solve(s):
+    if s not in cache:
+        if len(s) == 0:
+            return 1
+        else:
+            result = 0
+            for poss in s1:
+                if s.startswith(poss):
+                    result += solve(s[len(poss) :])
+                cache[s] = result
+    return cache[s]
 
-def part_two():
-    ...
 
-aoc_lube.submit(year=2024, day=19, part=1, solution=part_one)
-aoc_lube.submit(year=2024, day=19, part=2, solution=part_two)
+# P1
+for l in s2.split("\n"): 
+    if solve(l) > 0:
+       P1 += 1
+
+# P2 
+for l in s2.split("\n"):
+    P2 += solve(l) 
+
+
+print(f"Part One: {P1}")
+print(f"Part Two: {P2}")

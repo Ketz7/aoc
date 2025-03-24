@@ -1,18 +1,72 @@
-import aoc_lube
+from collections import defaultdict, deque
+from timeit import timeit
 
-RAW = aoc_lube.fetch(year=2024, day=10)
-print(RAW)
 
-def parse_raw():
-    ...
+class Solution:
+    def __init__(self, grid: dict[complex, int], zeroes: set[complex]) -> None:
+        self.grid: dict[complex, int] = grid
+        self.zeroes: set[complex] = zeroes
 
-DATA = parse_raw()
+    @classmethod
+    def parse_input(cls) -> "Solution":
+        """
+        Parse the problem data input to be used.
 
-def part_one():
-    ...
+        Returns:
+            Solution:
+                Class instance with the parsed input data.
+        """
+        with open("input_6.txt", "r") as file:
+            values: dict[complex, int] = defaultdict(int)
+            zeroes: set[complex] = set()
 
-def part_two():
-    ...
+            for x, row in enumerate(file.readlines()):
+                for y, col in enumerate(row.strip()):
+                    pos: complex = x + 1j * y
+                    values[pos] = int(col)
 
-aoc_lube.submit(year=2024, day=10, part=1, solution=part_one)
-aoc_lube.submit(year=2024, day=10, part=2, solution=part_two)
+                    if col == "0":
+                        zeroes.add(pos)
+
+        return cls(grid=values, zeroes=zeroes)
+
+    def solve(self) -> None:
+        """
+        Solves both parts of the problem.
+
+        Returns:
+            None
+        """
+        p1: int = 0
+        p2: int = 0
+
+        # Simple DFS
+        for starting_point in self.zeroes:
+            q: deque[complex] = deque([starting_point])
+            targets_met: set[complex] = set()
+            unique_paths: int = 0
+
+            while q:
+                curr = q.popleft()
+
+                if self.grid[curr] == 9:
+                    unique_paths += 1
+                    targets_met.add(curr)
+                    continue
+
+                for change in (1, -1, -1j, 1j):
+                    if n := self.grid.get(curr + change):
+                        if n == self.grid[curr] + 1:
+                            q.appendleft(curr + change)
+
+            p1 += len(targets_met)
+            p2 += unique_paths
+
+        print(f"Part 01: {p1}")
+        print(f"Part 02: {p2}")
+
+
+if __name__ == "__main__":
+    sol: Solution = Solution.parse_input()
+
+    print((timeit(sol.solve, number=1)).result(), "\n")

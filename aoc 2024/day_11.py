@@ -1,18 +1,93 @@
-import aoc_lube
+from functools import lru_cache
+from timeit import timeit
 
-RAW = aoc_lube.fetch(year=2024, day=11)
-print(RAW)
+class Solution:
+    """Solutions to the problems."""
 
-def parse_raw():
-    ...
+    def __init__(self, data: list[int]) -> None:
+        self.stones: list[int] = data
 
-DATA = parse_raw()
+    @classmethod
+    def parse_input(cls) -> "Solution":
+        """Parse the problem data input to be used.
 
-def part_one():
-    ...
+        Returns:
+            Solution:
+                Class instance with the parsed input data.
+        """
+        with open("input_6.txt", "r") as file:
+            values: list[int] = list(map(int, file.read().strip().split(" ")))
 
-def part_two():
-    ...
+        return cls(data=values)
 
-aoc_lube.submit(year=2024, day=11, part=1, solution=part_one)
-aoc_lube.submit(year=2024, day=11, part=2, solution=part_two)
+    @lru_cache(None)
+    def mutate(self, stone: int, amount: int, limit: int) -> int:
+        """Mutate the given stone the given amount of times, till LIMIT is reached.
+
+        Args:
+            stone (int):
+                Stone to be mutated.
+            amount (int):
+                Current iteration.
+            limit (int):
+                Total number of iterations to perform.
+
+        Returns:
+            int:
+                Total number of stones after the original stone has been mutated LIMIT
+                amount of times.
+        """
+        if amount == limit:
+            return 1
+
+        if stone == 0:
+            return self.mutate(1, amount + 1, limit)
+
+        if len(str(stone)) % 2 == 0:
+            mid: int = len(str(stone)) // 2
+            return self.mutate(int(str(stone)[:mid]), amount + 1, limit) + self.mutate(
+                int(str(stone)[mid:]), amount + 1, limit
+            )
+
+        return self.mutate(stone * 2024, amount + 1, limit)
+
+    def solve(self, limit: int) -> int:
+        """Solve the problem up to the given LIMIT, being the number of iterations of
+        mutations that should occur.
+
+        Args:
+            limit (int):
+                Total number of mutation iterations to perform.
+
+        Returns:
+            int:
+                Number of stones after LIMIT mutation iterations.
+        """
+        return sum(
+            self.mutate(stone=stone, amount=0, limit=limit) for stone in self.stones
+        )
+
+    def part_01(self) -> None:
+        """Solve Part 01 of the problem.
+
+        Returns:
+            None
+        """
+        tlt: int = self.solve(limit=25)
+        print(f"Part 01: {tlt}")
+
+    def part_02(self) -> None:
+        """Solve Part 02 of the problem.
+
+        Returns:
+            None
+        """
+        tlt: int = self.solve(limit=75)
+        print(f"Part 02: {tlt}")
+
+
+if __name__ == "__main__":
+    sol: Solution = Solution.parse_input()
+
+    print((timeit(sol.part_01, number=1)), "\n")
+    print((timeit(sol.part_02, number=1)), "\n")
